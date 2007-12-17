@@ -8,7 +8,6 @@ Source0: 	http://www.stellingwerff.com/TheWidgetFactory/thewidgetfactory-0.2.1.t
 # (fc)  add more widgets
 Patch0:		thewidgetfactory-0.2.1-newwidgets.patch.bz2
 URL:		http://www.stellingwerff.com/?page_id=10
-BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 BuildRequires:	gtk2-devel
 BuildRequires:  glade2
 %if %mdkversion <= 200600
