@@ -1,7 +1,7 @@
 Name: 		thewidgetfactory
 Summary: 	Test tool for GTK2 theme
 Version: 	0.2.1
-Release: 	%mkrel 1
+Release: 	%mkrel 2
 License:	GPL
 Group: 		Development/Other
 Source0: 	http://www.stellingwerff.com/TheWidgetFactory/thewidgetfactory-0.2.1.tar.bz2
