@@ -1,0 +1,191 @@
+diff -p -up thewidgetfactory-0.2.1/configure.ac.libglade thewidgetfactory-0.2.1/configure.ac
+--- thewidgetfactory-0.2.1/configure.ac.libglade	2006-03-29 11:29:47.000000000 +0200
++++ thewidgetfactory-0.2.1/configure.ac	2008-07-18 16:47:53.000000000 +0200
+@@ -19,7 +19,7 @@ AM_PROG_LIBTOOL
+ enableval="n"
+ disableval="y"
+ 
+-PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4.0,,
++PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4.0 libglade-2.0,,
+                   AC_MSG_ERROR([GTK+-2.4 is required to compile gtk-engines]))
+ 
+ AC_SUBST(GTK_CFLAGS)
+diff -p -up thewidgetfactory-0.2.1/Makefile.am.libglade thewidgetfactory-0.2.1/Makefile.am
+--- thewidgetfactory-0.2.1/Makefile.am.libglade	2006-03-29 11:29:47.000000000 +0200
++++ thewidgetfactory-0.2.1/Makefile.am	2008-07-18 16:49:46.000000000 +0200
+@@ -8,3 +8,8 @@ EXTRA_DIST = \
+ rpm : dist
+ 	rpmbuild --nodeps -ta $(PACKAGE)-$(VERSION).tar.gz
+ 	@rm -f $(PACKAGE)-$(VERSION).tar.gz
++	
++twf_DATA = \
++	twf.glade
++
++twfdir = $(datadir)/$(PACKAGE)
+diff -p -up thewidgetfactory-0.2.1/src/callbacks.c.libglade thewidgetfactory-0.2.1/src/callbacks.c
+--- thewidgetfactory-0.2.1/src/callbacks.c.libglade	2008-07-18 16:47:53.000000000 +0200
++++ thewidgetfactory-0.2.1/src/callbacks.c	2008-07-18 16:47:53.000000000 +0200
+@@ -3,11 +3,11 @@
+ #endif
+ 
+ #include <gtk/gtk.h>
++#include <glade/glade-xml.h>
+ 
+ #include "callbacks.h"
+-#include "interface.h"
+-#include "support.h"
+ 
++extern GladeXML *xml;
+ 
+ void
+ on_new1_activate                       (GtkMenuItem     *menuitem,
+@@ -99,19 +99,19 @@ on_scale_value_changed                 (
+ 	gdouble value;
+ 	int i;
+ 	
+-	scales[0] = lookup_widget (GTK_WIDGET(range), "hscale1");
+-	scales[1] = lookup_widget (GTK_WIDGET(range), "hscale2");
+-	scales[2] = lookup_widget (GTK_WIDGET(range), "vscale1");
+-	scales[3] = lookup_widget (GTK_WIDGET(range), "vscale2");
+-
+-	bars[0]   = lookup_widget (GTK_WIDGET(range), "progressbar1");
+-	bars[1]   = lookup_widget (GTK_WIDGET(range), "progressbar2");
+-	bars[2]   = lookup_widget (GTK_WIDGET(range), "progressbar3");
+-	bars[3]   = lookup_widget (GTK_WIDGET(range), "progressbar4");
++	scales[0] = glade_xml_get_widget (xml, "hscale1");
++	scales[1] = glade_xml_get_widget (xml, "hscale2");
++	scales[2] = glade_xml_get_widget (xml, "vscale1");
++	scales[3] = glade_xml_get_widget (xml, "vscale2");
++
++	bars[0]   = glade_xml_get_widget (xml, "progressbar1");
++	bars[1]   = glade_xml_get_widget (xml, "progressbar2");
++	bars[2]   = glade_xml_get_widget (xml, "progressbar3");
++	bars[3]   = glade_xml_get_widget (xml, "progressbar4");
+ 	
+ 	value = gtk_range_get_value (range);
+ 	
+-	harmony = lookup_widget (GTK_WIDGET (range), "harmony");
++	harmony = glade_xml_get_widget (xml, "harmony");
+ 
+ 	if (!gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (harmony)))
+ 		return;
+@@ -162,7 +162,7 @@ void
+ on_top_activate                        (GtkMenuItem     *menuitem,
+                                         gpointer         user_data)
+ {
+-	GtkWidget *notebook = lookup_widget (GTK_WIDGET (menuitem), "notebook1");
++	GtkWidget *notebook = glade_xml_get_widget (xml, "notebook1");
+ 	gtk_notebook_set_tab_pos (GTK_NOTEBOOK (notebook), GTK_POS_TOP);
+ }
+ 
+@@ -171,7 +171,7 @@ void
+ on_bottom_activate                     (GtkMenuItem     *menuitem,
+                                         gpointer         user_data)
+ {
+-	GtkWidget *notebook = lookup_widget (GTK_WIDGET (menuitem), "notebook1");
++	GtkWidget *notebook = glade_xml_get_widget (xml, "notebook1");
+ 	gtk_notebook_set_tab_pos (GTK_NOTEBOOK (notebook), GTK_POS_BOTTOM);
+ }
+ 
+@@ -180,7 +180,7 @@ void
+ on_left_activate                       (GtkMenuItem     *menuitem,
+                                         gpointer         user_data)
+ {
+-	GtkWidget *notebook = lookup_widget (GTK_WIDGET (menuitem), "notebook1");
++	GtkWidget *notebook = glade_xml_get_widget (xml, "notebook1");
+ 	gtk_notebook_set_tab_pos (GTK_NOTEBOOK (notebook), GTK_POS_LEFT);
+ }
+ 
+@@ -189,7 +189,7 @@ void
+ on_right_activate                      (GtkMenuItem     *menuitem,
+                                         gpointer         user_data)
+ {
+-	GtkWidget *notebook = lookup_widget (GTK_WIDGET (menuitem), "notebook1");
++	GtkWidget *notebook = glade_xml_get_widget (xml, "notebook1");
+ 	gtk_notebook_set_tab_pos (GTK_NOTEBOOK (notebook), GTK_POS_RIGHT);
+ }
+ 
+diff -p -up thewidgetfactory-0.2.1/src/main.c.libglade thewidgetfactory-0.2.1/src/main.c
+--- thewidgetfactory-0.2.1/src/main.c.libglade	2008-07-18 16:47:53.000000000 +0200
++++ thewidgetfactory-0.2.1/src/main.c	2008-07-18 16:47:53.000000000 +0200
+@@ -8,11 +8,13 @@
+ #endif
+ 
+ #include <gtk/gtk.h>
++#include <glade/glade-xml.h>
++
+ 
+-#include "interface.h"
+-#include "support.h"
+ #include "themes.h"
+ 
++GladeXML *xml;
++
+ int
+ main (int argc, char *argv[])
+ {
+@@ -39,24 +41,26 @@ main (int argc, char *argv[])
+   gtk_set_locale ();
+   gtk_init (&argc, &argv);
+ 
+-  add_pixmap_directory (PACKAGE_DATA_DIR "/" PACKAGE "/pixmaps");
++  xml = glade_xml_new (PACKAGE_DATA_DIR "/" PACKAGE "/twf.glade", NULL, NULL);
++  g_assert (xml != NULL);
+ 
+   /*
+    * The following code was added by Glade to create one of each component
+    * (except popup menus), just so that you see something after building
+    * the project. Delete any components that you don't want shown initially.
+    */
+-  window2 = create_window2 ();
+-  pulse_progressbar (lookup_widget (window2, "progressbar5"));
++  window2 = glade_xml_get_widget (xml, "window2");
++  glade_xml_signal_autoconnect (xml);
++  pulse_progressbar (glade_xml_get_widget (xml, "progressbar5"));
+   gtk_widget_show (window2);
+ 
+-  combobox1 = lookup_widget (window2, "combobox1");
+-  combobox2 = lookup_widget (window2, "combobox2");
++  combobox1 = glade_xml_get_widget (xml, "combobox1");
++  combobox2 = glade_xml_get_widget (xml, "combobox2");
+ 
+-  comboboxentry1 = lookup_widget (window2, "comboboxentry1");
+-  comboboxentry2 = lookup_widget (window2, "comboboxentry2");
++  comboboxentry1 = glade_xml_get_widget (xml, "comboboxentry1");
++  comboboxentry2 = glade_xml_get_widget (xml, "comboboxentry2");
+   
+-  treeview1 = lookup_widget (window2, "treeview2");
++  treeview1 = glade_xml_get_widget (xml, "treeview2");
+ 		  
+   gtk_combo_box_set_active (GTK_COMBO_BOX (combobox1), 0);
+   gtk_combo_box_set_active (GTK_COMBO_BOX (combobox2), 0);
+@@ -95,11 +99,11 @@ main (int argc, char *argv[])
+   }
+ 
+ 
+-  switch_theme = lookup_widget (window2, "switch_theme");
++  switch_theme = glade_xml_get_widget (xml, "switch_theme");
+ 
+   create_themes_menu (switch_theme);
+ 
+-  g_timeout_add (100, pulse_progressbar, lookup_widget (window2, "progressbar5"));
++  g_timeout_add (100, pulse_progressbar, glade_xml_get_widget (xml, "progressbar5"));
+ 
+   /* grab focus so default button is drawn correctly */
+   gtk_widget_grab_focus (comboboxentry1);
+diff -p -up thewidgetfactory-0.2.1/src/Makefile.am.libglade thewidgetfactory-0.2.1/src/Makefile.am
+--- thewidgetfactory-0.2.1/src/Makefile.am.libglade	2006-03-29 11:29:47.000000000 +0200
++++ thewidgetfactory-0.2.1/src/Makefile.am	2008-07-18 16:47:53.000000000 +0200
+@@ -7,10 +7,9 @@ bin_PROGRAMS = twf
+ 
+ twf_SOURCES = \
+ 	main.c \
+-	support.c support.h \
+-	interface.c interface.h \
+ 	callbacks.c callbacks.h \
+ 	themes.c themes.h
+ 
+-twf_LDADD = $(GTK_LIBS) $(INTLLIBS)
++twf_LDADD = $(GTK_LIBS) $(INTLLIBS) 
++twf_LDFLAGS = -export-dynamic
+ 
