@@ -1,2 +1,3 @@
 sources:
-  "thewidgetfactory-0.2.1.tar.bz2:"	64a09ba445015721848283a8da330271a50a8d70
+  "thewidgetfactory-0.2.1-newwidgets.patch.bz2": cfedca4df7d9394dab1955c69b150945ca0a4ec6
+  "thewidgetfactory-0.2.1.tar.bz2": 64a09ba445015721848283a8da330271a50a8d70
