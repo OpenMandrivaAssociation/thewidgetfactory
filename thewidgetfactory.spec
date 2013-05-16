@@ -10,7 +10,7 @@ Patch0:		thewidgetfactory-0.2.1-newwidgets.patch.bz2
 # (fc) 0.2.1-3mdv port to libglade
 Patch1:		thewidgetfactory-0.2.1-libglade.patch
 URL:		http://www.stellingwerff.com/?page_id=10
-BuildRequires:	gtk2-devel
+BuildRequires:	pkgconfig(gtk+-2.0)
 BuildRequires:  pkgconfig(libglade-2.0)
 
 %description
@@ -31,16 +31,12 @@ autoreconf -fi
 %make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-
 %makeinstall_std
 
 %clean
-rm -rf $RPM_BUILD_ROOT
 
 
 %files 
-%defattr(-, root, root)
 %doc README ChangeLog AUTHORS
 %{_bindir}/*
 %{_datadir}/thewidgetfactory
