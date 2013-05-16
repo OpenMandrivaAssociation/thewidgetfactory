@@ -12,7 +12,7 @@ Patch1:		thewidgetfactory-0.2.1-libglade.patch
 URL:		http://www.stellingwerff.com/?page_id=10
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 BuildRequires:	gtk2-devel
-BuildRequires:  libglade2.0-devel
+BuildRequires:  pkgconfig(libglade-2.0)
 
 %description
 TheWidgetFactory is a showcase of GTK2 widgets, 
