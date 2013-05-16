@@ -1,7 +1,7 @@
 Name: 		thewidgetfactory
 Summary: 	Test tool for GTK2 theme
 Version: 	0.2.1
-Release: 	%mkrel 6
+Release: 	7
 License:	GPL
 Group: 		Development/Other
 Source0: 	http://www.stellingwerff.com/TheWidgetFactory/thewidgetfactory-0.2.1.tar.bz2
@@ -10,7 +10,6 @@ Patch0:		thewidgetfactory-0.2.1-newwidgets.patch.bz2
 # (fc) 0.2.1-3mdv port to libglade
 Patch1:		thewidgetfactory-0.2.1-libglade.patch
 URL:		http://www.stellingwerff.com/?page_id=10
-BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 BuildRequires:	gtk2-devel
 BuildRequires:  pkgconfig(libglade-2.0)
 
